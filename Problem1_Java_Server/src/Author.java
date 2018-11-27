@@ -1,6 +1,5 @@
-/**
- * This is the class Author. It models Book Authors.
- */
+// Sumner Bradley
+
 public class Author {
 
     private String name;

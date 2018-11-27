@@ -1,3 +1,5 @@
+// Sumner Bradley
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,36 +14,56 @@ public class app {
         String selection = "";
         Scanner sc = new Scanner(System.in);
 
-        //get the localhost IP address, if server is running on some other IP, you need to use that
         InetAddress host = InetAddress.getLocalHost();
         Socket socket = null;
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
-        socket = new Socket(host.getHostName(), 9876);
-
-
-        while (selection.toLowerCase() != "3"){
+        while (!selection.equals("4")){
+            socket = new Socket(host.getHostName(), 9876);
             System.out.println("Welcome to the library. Please select an option:\n" +
                     "1.\tPrint titles\n" +
                     "2.\tDisplay book info\n" +
                     "3.\tAdd book\n" +
                     "4.\tExit\n");
 
-            oos = new ObjectOutputStream(socket.getOutputStream());
-
             selection = sc.nextLine();
             switch (selection){
                 case "1":
-                    oos.writeObject("print");
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject("print$");
                     break;
                 case "2":
+                    oos = new ObjectOutputStream(socket.getOutputStream());
                     System.out.print("Enter book title: ");
-                    oos.writeObject("info," + sc.nextLine());
+                    oos.writeObject("info$" + sc.nextLine());
                     break;
                 case "3":
-                    oos.writeObject("add");
+                    System.out.print("Enter a title: ");
+                    String book = sc.nextLine() + "$";
+
+                    System.out.print("Enter author's name: ");
+                    book += sc.nextLine() + "$";
+
+                    System.out.print("Enter a publisher: ");
+                    book += sc.nextLine() + "$";
+
+                    System.out.print("Enter location: ");
+                    book += sc.nextLine() + "$";
+
+                    System.out.print("Enter the year published: ");
+                    book += sc.nextLine();
+
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject("add$" + book);
                     break;
+                case "4":
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject("exit$");
+                    //close resources
+                    oos.close();
+                    socket.close();
+                    return;
                 default:
                     System.out.println("Invalid selection...");
             }
@@ -49,14 +71,15 @@ public class app {
 
             ois = new ObjectInputStream(socket.getInputStream());
             String message = (String) ois.readObject();
-
-            System.out.println("Message: " + message);
+            System.out.println(message);
         }
         oos.writeObject("exit");
-        //close resources
+
+        // Close resources
         ois.close();
         oos.close();
-        Thread.sleep(100);
+        socket.close();
 
+        return;
     }
 }

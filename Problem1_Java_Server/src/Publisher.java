@@ -1,3 +1,5 @@
+// Sumner Bradley
+
 public class Publisher {
     private String name;
 

@@ -1,3 +1,5 @@
+// Sumner Bradley
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,10 +9,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class App {
-    //static ServerSocket variable
     private static ServerSocket server;
-    //socket server port on which it will listen
     private static int port = 9876;
+    private static Socket socket = null;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Library library = new Library();
@@ -26,23 +27,25 @@ public class App {
         server = new ServerSocket(port);
 
         while (true) {
-            System.out.println("Waiting for client request");
-            //creating socket and waiting for client connection
+            System.out.println("Waiting for a request");
+
             Socket socket = server.accept();
-            //read from socket to ObjectInputStream object
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            //convert ObjectInputStream object to String
+
             String message = (String) ois.readObject();
             System.out.println("Message Received: " + message);
-            //create ObjectOutputStream object
+
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
-            switch (message.toLowerCase()) {
+            switch (message.substring(0, message.indexOf("$")).toLowerCase()) {
                 case "print":
                     oos.writeObject(library.printBookTitles());
                     break;
+                case "info":
+                    oos.writeObject(library.printBookInfo(message.substring(message.indexOf("$")+1, message.length())));
+                    break;
                 case "add":
-                    //library.addBook();
+                    oos.writeObject(library.addBook(message.substring(message.indexOf("$")+1, message.length())));
                     break;
                 case "exit":
                     //close resources
@@ -52,8 +55,5 @@ public class App {
                     break;
             }
         }
-//        System.out.println("Shutting down Socket server!!");
-//        //close the ServerSocket object
-//        server.close();
     }
 }
