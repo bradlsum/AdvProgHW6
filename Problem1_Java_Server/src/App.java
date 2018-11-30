@@ -24,19 +24,22 @@ public class App {
         library.addBook("Book1","Shelf3", 1999,a1, p);
         library.addBook("Book2","Shelf3", 1999,a2, p);
 
+        ArrayList<Thread> threads = new ArrayList<>();
         server = new ServerSocket(port);
 
+        instance(library);
+    }
+
+    public static void instance(Library library) throws IOException, ClassNotFoundException {
         while (true) {
             System.out.println("Waiting for a request");
 
             Socket socket = server.accept();
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-
             String message = (String) ois.readObject();
             System.out.println("Message Received: " + message);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-
             switch (message.substring(0, message.indexOf("$")).toLowerCase()) {
                 case "print":
                     oos.writeObject(library.printBookTitles());
