@@ -21,16 +21,12 @@ public class App {
 
         Publisher p = new Publisher("Pearson");
 
-        library.addBook("Book1","Shelf3", 1999,a1, p);
-        library.addBook("Book2","Shelf3", 1999,a2, p);
+        library.addBook("Book1", "Shelf3", 1999, a1, p);
+        library.addBook("Book2", "Shelf3", 1999, a2, p);
 
         ArrayList<Thread> threads = new ArrayList<>();
         server = new ServerSocket(port);
 
-        instance(library);
-    }
-
-    public static void instance(Library library) throws IOException, ClassNotFoundException {
         while (true) {
             System.out.println("Waiting for a request");
 
@@ -45,10 +41,10 @@ public class App {
                     oos.writeObject(library.printBookTitles());
                     break;
                 case "info":
-                    oos.writeObject(library.printBookInfo(message.substring(message.indexOf("$")+1, message.length())));
+                    oos.writeObject(library.printBookInfo(message.substring(message.indexOf("$") + 1, message.length())));
                     break;
                 case "add":
-                    oos.writeObject(library.addBook(message.substring(message.indexOf("$")+1, message.length())));
+                    oos.writeObject(library.addBook(message.substring(message.indexOf("$") + 1, message.length())));
                     break;
                 case "exit":
                     //close resources
